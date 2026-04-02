@@ -1,0 +1,33 @@
+.codex
+
+# Gradle
+.gradle/
+.gradle-user/
+build/
+
+# Java
+out/
+*.class
+hs_err_pid*
+replay_pid*
+
+# Python
+__pycache__/
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+
+# Local tooling and downloads
+RuneLite.AppImage
+runelite/
+megalinter-reports/
+mega-linter.log
+
+# OS files
+.DS_Store
+Thumbs.db

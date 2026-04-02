@@ -1,0 +1,93 @@
+plugins {
+	id 'java'
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_11
+	targetCompatibility = JavaVersion.VERSION_11
+}
+
+repositories {
+	mavenLocal()
+	maven {
+		url = 'https://repo.runelite.net'
+	}
+	mavenCentral()
+}
+
+def runeLiteVersion = 'latest.release'
+def pluginMainClass = 'dev.namelessnanashi.runeshock.RuneshockPluginTest'
+def runeliteDir = project.hasProperty('runeliteDir')
+	? file(project.property('runeliteDir'))
+	: new File(System.getProperty('user.home'), '.runelite')
+def sideloadedPluginsDir = new File(runeliteDir, 'sideloaded-plugins')
+
+dependencies {
+	compileOnly group: 'net.runelite', name: 'client', version: runeLiteVersion
+
+	testImplementation 'junit:junit:4.13.2'
+	testImplementation group: 'net.runelite', name: 'client', version: runeLiteVersion
+	testImplementation group: 'net.runelite', name: 'jshell', version: runeLiteVersion
+}
+
+group = 'dev.namelessnanashi.runeshock'
+version = '0.1.0-SNAPSHOT'
+
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = 'UTF-8'
+	options.release = 11
+}
+
+tasks.named('test', Test) {
+	failOnNoDiscoveredTests = false
+}
+
+tasks.register('run', JavaExec) {
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = pluginMainClass
+	jvmArgs '-ea'
+	args '--developer-mode', '--debug'
+}
+
+tasks.register('shadowJar', Jar) {
+	manifest {
+		attributes('Main-Class': pluginMainClass, 'Multi-Release': true)
+	}
+
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	from sourceSets.main.output
+	from sourceSets.test.output
+	from {
+		configurations.testRuntimeClasspath.collect { file ->
+			file.isDirectory() ? file : zipTree(file)
+		}
+	}
+
+	exclude 'META-INF/INDEX.LIST'
+	exclude 'META-INF/*.SF'
+	exclude 'META-INF/*.DSA'
+	exclude 'META-INF/*.RSA'
+	exclude '**/module-info.class'
+
+	group = 'build'
+	archiveClassifier = 'all'
+}
+
+tasks.register('installSideload', Copy) {
+	description = 'Builds the plugin jar and copies it into RuneLite\'s sideloaded-plugins folder.'
+	group = 'build'
+	dependsOn tasks.named('jar')
+
+	from tasks.named('jar').flatMap { it.archiveFile }
+	into sideloadedPluginsDir
+
+	doFirst {
+		sideloadedPluginsDir.mkdirs()
+	}
+
+	doLast {
+		println "Installed ${tasks.named('jar', Jar).get().archiveFileName.get()} to ${sideloadedPluginsDir}"
+		println 'RuneLite only loads sideloaded plugins in developer mode.'
+		println 'Sideloaded plugins are not loaded when RuneLite is started by the Jagex launcher.'
+	}
+}
