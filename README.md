@@ -1,5 +1,8 @@
 # RuneShock
 
+> [!WARNING]
+> This project is currently abandoned. The RuneLite Plugin Hub submission was closed without merge in [runelite/plugin-hub#11330](https://github.com/runelite/plugin-hub/pull/11330), which was a very efficient way of making it clear that a Plugin Hub release is not happening. Unless that policy stance changes, this repo is archived.
+
 RuneShock is a RuneLite external plugin that sends OpenShock commands from in-game events.
 
 It is meant for players who want RuneLite events like damage, death, idle time, or notifications to trigger an OpenShock device.
