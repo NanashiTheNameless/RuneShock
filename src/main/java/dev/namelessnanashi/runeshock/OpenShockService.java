@@ -27,15 +27,16 @@ public class OpenShockService
 	private final Client client;
 	private final ClientThread clientThread;
 	private final HttpClient httpClient;
-	private final Gson gson = new Gson();
+	private final Gson gson;
 	private final AtomicLong lastDispatchMillis = new AtomicLong();
 	private final AtomicLong lastErrorMessageMillis = new AtomicLong();
 
 	@Inject
-	OpenShockService(Client client, ClientThread clientThread)
+	OpenShockService(Client client, ClientThread clientThread, Gson gson)
 	{
 		this.client = client;
 		this.clientThread = clientThread;
+		this.gson = gson;
 		this.httpClient = HttpClient.newBuilder()
 			.connectTimeout(Duration.ofSeconds(5))
 			.build();
