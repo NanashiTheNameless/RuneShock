@@ -29,9 +29,9 @@ import net.runelite.client.plugins.PluginDescriptor;
 @PluginDescriptor(
 	name = "RuneShock",
 	configName = RuneshockConfig.GROUP,
-	description = "Routes RuneLite events to a configured OpenShock device.",
+	description = "RuneShock is a RuneLite external plugin that sends OpenShock commands from in-game events.",
 	tags = {"openshock", "shock", "vibrate", "damage", "idle"},
-	enabledByDefault = false
+	enabledByDefault = true
 )
 public class RuneshockPlugin extends Plugin
 {
